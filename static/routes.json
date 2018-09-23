@@ -1,0 +1,134 @@
+{
+  "routes": [
+
+    {
+      "path": "/user",
+      "component": "Layout",
+      "redirect": "/user/userList",
+      "name": "User",
+      "meta": { "title": "用户系统", "icon": "user" },
+      "alwaysShow": true,
+      "children": [
+        {
+          "path": "userList",
+          "name": "UserList",
+          "component": "UserList",
+          "meta": { "title": "用户列表", "icon": "user" }
+        }
+      ]
+    },
+    {
+      "path": "/order",
+      "component": "Layout",
+      "redirect": "/order/orderList",
+      "name": "Order",
+      "meta": { "title": "订单系统", "icon": "money" },
+      "alwaysShow": true,
+      "children": [
+        {
+          "path": "orderList",
+          "name": "OrderList",
+          "component": "OrderList",
+          "meta": { "title": "订单列表", "icon": "money" }
+        }
+      ]
+    },
+    {
+      "path": "/webManager",
+      "component": "Layout",
+      "redirect": "/webManager/home",
+      "name": "WebManager",
+      "meta": { "title": "网站管理", "icon": "money" },
+      "alwaysShow": true,
+      "children": [
+        {
+          "path": "home",
+          "name": "Home",
+          "component": "WebManagerHome",
+          "meta": { "title": "网站首页管理", "icon": "money" }
+        },
+        {
+          "path": "banner",
+          "name": "Banner",
+          "component": "WebManagerBanner",
+          "meta": { "title": "banner管理", "icon": "money", "parents": [ {  "meta": { "title": "网站首页管理" }, "path": "/webManager/home" } ] },
+          "hidden": true
+        },
+        {
+          "path": "news",
+          "name": "News",
+          "component": "WebManagerNews",
+          "meta": { "title": "资讯管理", "icon": "money", "parents": [ {  "meta": { "title": "网站首页管理" }, "path": "/webManager/home" } ] },
+          "hidden": true
+        }
+      ]
+    },
+    {
+      "path": "/temple",
+      "component": "Layout",
+      "redirect": "/temple/templeList",
+      "name": "Temple",
+      "meta": { "title": "寺庙管理", "icon": "money" },
+      "alwaysShow": true,
+      "children": [
+        {
+          "path": "templeList",
+          "name": "TempleList",
+          "component": "TempleList",
+          "meta": { "title": "寺庙列表", "icon": "money" }
+        },
+        {
+          "path": "templeHome",
+          "name": "TempleHome",
+          "component": "TempleHome",
+          "meta": { "title": "寺庙首页管理", "icon": "money" },
+          "hidden": true
+        },
+        {
+          "path": "templeMonk",
+          "name": "TempleMonk",
+          "component": "TempleMonk",
+          "meta": { "title": "寺庙僧人列表", "icon": "money" },
+          "hidden": true
+        },
+        {
+          "path": "templeNotice",
+          "name": "TempleNotice",
+          "component": "TempleNotice",
+          "meta": { "title": "寺庙通告列表", "icon": "money" },
+          "hidden": true
+        }
+      ]
+    },
+    {
+      "path": "/system",
+      "component": "Layout",
+      "redirect": "/system/menuList",
+      "name": "System",
+      "meta": { "title": "系统管理", "icon": "money" },
+      "alwaysShow": true,
+      "children": [
+        {
+          "path": "menuList",
+          "name": "MenuList",
+          "component": "MenuList",
+          "meta": { "title": "菜单管理", "icon": "money" }
+        },
+        {
+          "path": "merchantList",
+          "name": "MerchantList",
+          "component": "MerchantList",
+          "meta": { "title": "商户管理", "icon": "money" }
+        },
+        {
+          "path": "roleList",
+          "name": "RoleList",
+          "component": "RoleList",
+          "meta": { "title": "角色管理", "icon": "money" }
+        }
+      ]
+    },
+
+    { "path": "*", "redirect": "/404", "hidden": true }
+  ]
+}
