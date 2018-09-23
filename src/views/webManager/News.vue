@@ -137,7 +137,7 @@
 
 <script>
 import Tinymce from '@/components/Tinymce'
-import { getNewsList, addNewsInfo, editNewsInfo, deleteNewsInfo } from '@/api/news'
+import { getNewsList, addNewsInfo, editNewsInfo, deleteNewsInfo, disableNewsInfo, ableNewsInfo } from '@/api/news'
 import { imgUrl } from '@/api/images'
 export default {
   name: 'News',
@@ -343,21 +343,37 @@ export default {
       return isJPG && isLt2M
     },
     openClose(row) {
-      const newsStatus = (row.newsStatus === 1 ? 2 : 1)
-      editNewsInfo({ newsStatus: newsStatus, id: row.id }).then(res => {
-        for (const v of this.list) {
-          if (v.id === row.id) {
-            v.state = newsStatus
-            break
+      if (row.newsStatus === 1) {
+        disableNewsInfo({ id: row.id }).then(res => {
+          for (const v of this.list) {
+            if (v.id === row.id) {
+              v.newsStatus = 2
+              break
+            }
           }
-        }
-        this.$notify({
-          title: '成功',
-          message: '设置成功',
-          type: 'success',
-          duration: 2000
+          this.$notify({
+            title: '成功',
+            message: '禁用成功',
+            type: 'success',
+            duration: 2000
+          })
         })
-      })
+      } else {
+        ableNewsInfo({ id: row.id }).then(res => {
+          for (const v of this.list) {
+            if (v.id === row.id) {
+              v.newsStatus = 1
+              break
+            }
+          }
+          this.$notify({
+            title: '成功',
+            message: '启用成功',
+            type: 'success',
+            duration: 2000
+          })
+        })
+      }
     },
     deleteNews(row) {
       this.$confirm('确认删除？')

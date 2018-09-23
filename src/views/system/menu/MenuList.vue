@@ -242,12 +242,24 @@ export default {
               break
             }
           }
+          this.$notify({
+            title: '成功',
+            message: '禁用成功',
+            type: 'success',
+            duration: 2000
+          })
         })
       } else {
         ableMenu({ id: row.id }).then(res => {
           for (const v of this.list) {
             if (v.id === row.id) {
               v.state = 1
+              this.$notify({
+                title: '成功',
+                message: '启用成功',
+                type: 'success',
+                duration: 2000
+              })
               break
             }
           }

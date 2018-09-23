@@ -28,3 +28,17 @@ export function deleteNewsInfo(params) {
     data: params
   })
 }
+export function disableNewsInfo(params) {
+  return request({
+    url: '/api/indexManager/disableNewsInfo',
+    method: 'post',
+    data: params
+  })
+}
+export function ableNewsInfo(params) {
+  return request({
+    url: '/api/indexManager/ableNewsInfo',
+    method: 'post',
+    data: params
+  })
+}
