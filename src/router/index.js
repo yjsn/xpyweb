@@ -54,3 +54,137 @@ export default new Router({
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRouterMap
 })
+
+export const newRouters = {
+  'routes': [
+    {
+      'path': '/user',
+      'component': Layout,
+      'redirect': '/user/userList',
+      'name': 'User',
+      'meta': { 'title': '用户系统', 'icon': 'user' },
+      'alwaysShow': true,
+      'children': [
+        {
+          'path': 'userList',
+          'name': 'UserList',
+          'component': () => import('@/views/UserList/index'),
+          'meta': { 'title': '用户列表', 'icon': 'user' }
+        }
+      ]
+    },
+    {
+      'path': '/order',
+      'component': Layout,
+      'redirect': '/order/orderList',
+      'name': 'Order',
+      'meta': { 'title': '订单系统', 'icon': 'money' },
+      'alwaysShow': true,
+      'children': [
+        {
+          'path': 'orderList',
+          'name': 'OrderList',
+          'component': () => import('@/views/OrderList/index'),
+          'meta': { 'title': '订单列表', 'icon': 'money' }
+        }
+      ]
+    },
+    {
+      'path': '/webManager',
+      'component': Layout,
+      'redirect': '/webManager/home',
+      'name': 'WebManager',
+      'meta': { 'title': '网站管理', 'icon': 'money' },
+      'alwaysShow': true,
+      'children': [
+        {
+          'path': 'home',
+          'name': 'Home',
+          'component': () => import('@/views/WebManager/Home'),
+          'meta': { 'title': '网站首页管理', 'icon': 'money' }
+        },
+        {
+          'path': 'banner',
+          'name': 'Banner',
+          'component': () => import('@/views/WebManager/Banner'),
+          'meta': { 'title': 'banner管理', 'icon': 'money', 'parents': [{ 'meta': { 'title': '网站首页管理' }, 'path': '/webManager/home' }] },
+          'hidden': true
+        },
+        {
+          'path': 'news',
+          'name': 'News',
+          'component': () => import('@/views/WebManager/News'),
+          'meta': { 'title': '资讯管理', 'icon': 'money', 'parents': [{ 'meta': { 'title': '网站首页管理' }, 'path': '/webManager/home' }] },
+          'hidden': true
+        }
+      ]
+    },
+    {
+      'path': '/temple',
+      'component': Layout,
+      'redirect': '/temple/templeList',
+      'name': 'Temple',
+      'meta': { 'title': '寺庙管理', 'icon': 'money' },
+      'alwaysShow': true,
+      'children': [
+        {
+          'path': 'templeList',
+          'name': 'TempleList',
+          'component': () => import('@/views/Temple/TempleList'),
+          'meta': { 'title': '寺庙列表', 'icon': 'money' }
+        },
+        {
+          'path': 'templeHome',
+          'name': 'TempleHome',
+          'component': () => import('@/views/Temple/TempleHome'),
+          'meta': { 'title': '寺庙首页管理', 'icon': 'money' },
+          'hidden': true
+        },
+        {
+          'path': 'templeMonk',
+          'name': 'TempleMonk',
+          'component': () => import('@/views/Temple/TempleMonk'),
+          'meta': { 'title': '寺庙僧人列表', 'icon': 'money' },
+          'hidden': true
+        },
+        {
+          'path': 'templeNotice',
+          'name': 'TempleNotice',
+          'component': () => import('@/views/Temple/TempleNotice'),
+          'meta': { 'title': '寺庙通告列表', 'icon': 'money' },
+          'hidden': true
+        }
+      ]
+    },
+    {
+      'path': '/system',
+      'component': Layout,
+      'redirect': '/system/menuList',
+      'name': 'System',
+      'meta': { 'title': '系统管理', 'icon': 'money' },
+      'alwaysShow': true,
+      'children': [
+        {
+          'path': 'menuList',
+          'name': 'MenuList',
+          'component': () => import('@/views/system/menu/MenuList'),
+          'meta': { 'title': '菜单管理', 'icon': 'money' }
+        },
+        {
+          'path': 'merchantList',
+          'name': 'MerchantList',
+          'component': () => import('@/views/system/merchant/MerchantList'),
+          'meta': { 'title': '商户管理', 'icon': 'money' }
+        },
+        {
+          'path': 'roleList',
+          'name': 'RoleList',
+          'component': () => import('@/views/system/role/RoleList'),
+          'meta': { 'title': '角色管理', 'icon': 'money' }
+        }
+      ]
+    },
+
+    { 'path': '*', 'redirect': '/404', 'hidden': true }
+  ]
+}

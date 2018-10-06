@@ -17,3 +17,11 @@ export function logout() {
     method: 'post'
   })
 }
+
+export function newRoutersOnline() {
+  return request({
+    url: 'api/merchant/permission',
+    method: 'post'
+  })
+}
+

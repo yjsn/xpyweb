@@ -1,40 +1,59 @@
-import { login, logout } from '@/api/login'
+import { login, logout, newRoutersOnline } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import router, { routesPath } from '@/router/index'
+import router, { newRouters } from '@/router/index'
 
-/* Layout */
-import Layout from '@/views/layout/Layout'
+/* Layout
+import Layout from '@/views/layout/Layout' */
 
-var myFetch = async() => {
-  try {
-    const response = await fetch('./static/routes.json', {
-      method: 'get',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      credentials: 'include',
-      cache: 'force-cache',
-      mode: 'cors'
+// var myFetch = async() => {
+//   try {
+//     const response = await fetch('./static/routes.json', {
+//       method: 'get',
+//       headers: {
+//         'Accept': 'application/json',
+//         'Content-Type': 'application/json'
+//       },
+//       credentials: 'include',
+//       cache: 'force-cache',
+//       mode: 'cors'
+//     })
+//     const data = await response.json()
+//     return data
+//   } catch (e) {
+//     console.log('Oops, error', e)
+//   }
+// }
+// function recursionRouter(userRouter = [], routesPath = {}) {
+//   userRouter.forEach((item, index) => {
+//     if (item.component === 'Layout') {
+//       item.component = Layout
+//     } else {
+//       item.component = routesPath[item.component]
+//     }
+//     if (item.children && item.children.length > 0) {
+//       recursionRouter(item.children, routesPath)
+//     }
+//   })
+//   return userRouter
+// }
+
+function recursionRouters(userRouter = [], newRouters = []) {
+  var addRouter = []
+  userRouter.forEach((userRouterItem, index) => {
+    newRouters.forEach((newRoutersItem, index) => {
+      if (newRoutersItem.path === userRouterItem.path) {
+        const item = newRoutersItem
+        if (userRouterItem.children) {
+          const children = recursionRouters(userRouterItem.children, newRoutersItem.children)
+          if (children.length) {
+            item.children = children
+          }
+        }
+        addRouter.push(item)
+      }
     })
-    const data = await response.json()
-    return data
-  } catch (e) {
-    console.log('Oops, error', e)
-  }
-}
-function recursionRouter(userRouter = [], routesPath = {}) {
-  userRouter.forEach((item, index) => {
-    if (item.component === 'Layout') {
-      item.component = Layout
-    } else {
-      item.component = routesPath[item.component]
-    }
-    if (item.children && item.children.length > 0) {
-      recursionRouter(item.children, routesPath)
-    }
   })
-  return userRouter
+  return addRouter
 }
 
 const user = {
@@ -68,13 +87,20 @@ const user = {
     },
     SetRoutes({ commit, state }) {
       return new Promise((resolve, reject) => {
-        myFetch().then(response => {
-          var newRoutes = recursionRouter(response.routes, routesPath)
+        newRoutersOnline().then(res => {
+          const newRoutes = recursionRouters(res.data, newRouters.routes)
           commit('SET_ROUTES', [...router.options.routes, ...newRoutes])
           resolve(newRoutes)
         }).catch(error => {
           reject(error)
         })
+        // myFetch().then(response => {
+        //   var newRoutes = recursionRouter(response.routes, routesPath)
+        //   commit('SET_ROUTES', [...router.options.routes, ...newRoutes])
+        //   resolve(newRoutes)
+        // }).catch(error => {
+        //   reject(error)
+        // })
       })
     },
 
