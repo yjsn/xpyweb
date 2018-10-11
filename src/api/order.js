@@ -7,3 +7,11 @@ export function getOrderList(params) {
     data: params
   })
 }
+
+export function orderCompletion(params) {
+  return request({
+    url: '/api/merits/completion',
+    method: 'post',
+    data: params
+  })
+}

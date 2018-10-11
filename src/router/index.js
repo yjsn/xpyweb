@@ -134,6 +134,12 @@ export const newRouters = {
           'meta': { 'title': '寺庙列表', 'icon': 'money' }
         },
         {
+          'path': 'TempleOrderList',
+          'name': 'TempleOrderList',
+          'component': () => import('@/views/Temple/TempleOrderList'),
+          'meta': { 'title': '寺庙订单列表', 'icon': 'money' }
+        },
+        {
           'path': 'templeHome',
           'name': 'TempleHome',
           'component': () => import('@/views/Temple/TempleHome'),

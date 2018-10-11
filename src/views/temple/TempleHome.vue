@@ -157,13 +157,13 @@ export default {
     },
     beforeImgUpload(file) {
       const isJPG = file.type === 'image/pjpeg' || 'image/gif' || 'image/bmp' || 'image/x-png' || 'image/tiff' || 'image/png' || 'image/jpeg'
-      const isLt2M = file.size / 1024 / 1024 < 20
+      const isLt2M = file.size / 1024 / 1024 < 10
 
       if (!isJPG) {
         this.$message.error('上传头像图片只能是 JPG 格式!')
       }
       if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
+        this.$message.error('上传头像图片大小不能超过 10MB!')
       }
       return isJPG && isLt2M
     },
