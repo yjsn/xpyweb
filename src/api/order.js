@@ -15,3 +15,11 @@ export function orderCompletion(params) {
     data: params
   })
 }
+
+export function orderDetail(params) {
+  return request({
+    url: '/api/merits/meritsDetail',
+    method: 'post',
+    data: params
+  })
+}

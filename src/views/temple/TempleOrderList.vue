@@ -53,7 +53,7 @@
     <div class="pagination-container">
       <el-pagination v-show="total>0" :current-page="options.pageNum" :page-sizes="[10,20,30, 50]" :page-size="options.pageSize" :total="total" background layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange"/>
     </div>
-    <el-dialog :visible.sync="dialogFormVisible" title="编辑">
+    <el-dialog :visible.sync="dialogFormVisible" title="功德订单回执">
       <el-form ref="dataForm" :rules="rules" :model="dialogData" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
         <el-form-item label="订单编号">
           <el-input v-model="dialogData.meritsNumber" :disabled="true"/>
@@ -101,7 +101,7 @@
 </template>
 
 <script>
-import { getOrderList, orderCompletion } from '@/api/order'
+import { getOrderList, orderCompletion, orderDetail } from '@/api/order'
 import { imgUrl } from '@/api/images'
 export default {
   name: 'TempleOrderList',
@@ -117,12 +117,12 @@ export default {
       },
       dialogFormVisible: false,
       rules: {
-        // meritsImg1: [
-        //   { required: true, message: '请上传图片1', trigger: 'change' }
-        // ],
-        // meritsImg2: [
-        //   { required: true, message: '请上传图片2', trigger: 'change' }
-        // ],
+        meritsImg1: [
+          { required: true, message: '请上传图片1', trigger: 'change' }
+        ],
+        meritsImg2: [
+          { required: true, message: '请上传图片2', trigger: 'change' }
+        ],
         templeName: [
           { required: true, message: '请输入寺庙名称', trigger: 'blur' }
         ],
@@ -133,17 +133,17 @@ export default {
           { required: true, message: '请输入简介', trigger: 'blur' }
         ]
       },
-      merits: {
-        id: null,
+      dialogData: {
+        meritsImg1: null,
+        meritsImg2: null,
+        meritsId: null,
         meritsNumber: null,
         customerName: null,
         meritsName: null,
         applyTime: null
       },
-      dialogData: {
-        meritsImg1: null,
-        meritsImg2: null,
-        meritsId: null
+      meritsParams: {
+        id: null
       },
       imgUrl: imgUrl,
       dialogShowImg1: null,
@@ -200,11 +200,30 @@ export default {
       this.dialogFormVisible = false
     },
     handleEdit(row) {
-      this.dialogData = Object.assign({}, row) // copy obj
-      // this.dialogShowImg = this.dialogData.templeCoverImg + '/200X200'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
+      // this.dialogData = Object.assign({}, row) // copy obj
+      this.meritsParams.id = row.id
+      orderDetail(this.meritsParams).then(res => {
+        if (res.data) {
+          this.dialogData.meritsImg1 = res.data.meritsImg1
+          this.dialogData.meritsImg2 = res.data.meritsImg2
+          this.dialogData.meritsId = res.data.meritsId
+          this.dialogData.meritsNumber = res.data.merits.meritsNumber
+          this.dialogData.meritsName = res.data.merits.meritsName
+          this.dialogData.customerName = res.data.merits.customerName
+          this.applyTime = res.data.merits.applyTime
+          this.dialogShowImg1 = this.dialogData.meritsImg1 + '/200X200'
+          this.dialogShowImg2 = this.dialogData.meritsImg2 + '/200X200'
+        } else {
+          this.dialogData.meritsId = row.id
+          this.dialogData.meritsNumber = row.meritsNumber
+          this.dialogData.meritsName = row.meritsName
+          this.dialogData.customerName = row.customerName
+          this.dialogData.applyTime = row.applyTime
+        }
+        this.dialogFormVisible = true
+        this.$nextTick(() => {
+          this.$refs['dataForm'].clearValidate()
+        })
       })
     },
     editMerits() {
@@ -213,6 +232,13 @@ export default {
           const meritsDetailData = Object.assign({}, this.dialogData)
           console.log(meritsDetailData)
           orderCompletion(meritsDetailData).then((res) => {
+            for (const v of this.list) {
+              if (v.id === this.dialogData.meritsId) {
+                const index = this.list.indexOf(v)
+                this.list.splice(index, 1, res.data.merits)
+                break
+              }
+            }
             this.dialogData = res.data
             this.dialogFormVisible = false
             this.$notify({
