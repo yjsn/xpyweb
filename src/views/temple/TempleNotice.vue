@@ -17,34 +17,34 @@
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="母鸡" align="center">
+      <el-table-column label="标题">
         <template slot-scope="scope">
-          我母鸡啊
+          <span>{{ scope.row.newsTitle }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="母鸡" align="center">
+      <el-table-column label="描述">
         <template slot-scope="scope">
-          我母鸡啊
+          <span>{{ scope.row.newsDescription }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="母鸡" align="center">
+      <el-table-column label="排序" align="center">
         <template slot-scope="scope">
-          我母鸡啊
+          <span>{{ scope.row.newsSort }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="母鸡" align="center">
+      <el-table-column label="首页推荐">
         <template slot-scope="scope">
-          我母鸡啊
+          <span>{{ scope.row.newsRecommend?'否':'是' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="母鸡" align="center">
+      <el-table-column label="状态">
         <template slot-scope="scope">
-          我母鸡啊
+          <span>{{ scope.row.newsStatus==2?'禁用':'启用' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="母鸡" align="center">
+      <el-table-column label="类别">
         <template slot-scope="scope">
-          我母鸡啊
+          <span>{{ scope.row.newsType==0?'佛门动态':scope.row.newsType==1?'政策法规':scope.row.newsType==2?'佛学入门':'法会信息' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="95">
@@ -251,7 +251,7 @@ export default {
     addNewNotice() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          templeNewsInfoEdit(this.dialogData).then((res) => {
+          templeNewsInfoAdd(this.dialogData).then((res) => {
             this.list.unshift(res.data)
             this.dialogFormVisible = false
             this.$notify({
@@ -279,7 +279,7 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.dialogData)
-          templeNewsInfoAdd(tempData).then((res) => {
+          templeNewsInfoEdit(tempData).then((res) => {
             for (const v of this.list) {
               if (v.id === this.dialogData.id) {
                 const index = this.list.indexOf(v)
