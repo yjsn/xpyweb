@@ -143,8 +143,7 @@ export const newRouters = {
           'path': 'templeHome',
           'name': 'TempleHome',
           'component': () => import('@/views/Temple/TempleHome'),
-          'meta': { 'title': '寺庙首页管理', 'icon': 'money' },
-          'hidden': true
+          'meta': { 'title': '寺庙首页管理', 'icon': 'money' }
         },
         {
           'path': 'templeMonk',

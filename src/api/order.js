@@ -8,6 +8,14 @@ export function getOrderList(params) {
   })
 }
 
+export function getTempleOrderList(params) {
+  return request({
+    url: '/api/merits/templeList',
+    method: 'post',
+    data: params
+  })
+}
+
 export function orderCompletion(params) {
   return request({
     url: '/api/merits/completion',

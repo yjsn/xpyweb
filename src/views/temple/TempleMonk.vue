@@ -17,43 +17,33 @@
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="母鸡" align="center">
+      <el-table-column label="僧人名称" align="center">
         <template slot-scope="scope">
-          我母鸡啊
+          <span>{{ scope.row.templeMonkName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="母鸡" align="center">
+      <el-table-column label="僧人概述" align="center">
         <template slot-scope="scope">
-          我母鸡啊
+          <span>{{ scope.row.templeMonkDesciption }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="母鸡" align="center">
+      <el-table-column label="页面展示排序" align="center">
         <template slot-scope="scope">
-          我母鸡啊
+          <span>{{ scope.row.sort }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="母鸡" align="center">
+      <el-table-column label="页面是否展示" align="center">
         <template slot-scope="scope">
-          我母鸡啊
-        </template>
-      </el-table-column>
-      <el-table-column label="母鸡" align="center">
-        <template slot-scope="scope">
-          我母鸡啊
-        </template>
-      </el-table-column>
-      <el-table-column label="母鸡" align="center">
-        <template slot-scope="scope">
-          我母鸡啊
+          <span>{{ scope.row.status === 1 ? '展示' : '不展示' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="95">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleEdit(scope.row)">编辑</el-button>
           <p style="margin: 10px 0" />
-          <el-button type="warning" size="mini" icon="el-icon-setting" @click="openClose(scope.row)">{{ scope.row.status?'启用':'禁用' }}</el-button>
+          <el-button type="warning" size="mini" icon="el-icon-setting" @click="openClose(scope.row)">{{ scope.row.status === 1 ? '不展示':'展示' }}</el-button>
           <p style="margin: 10px 0" />
-          <el-button type="danger" size="mini" icon="el-icon-remove">删除</el-button>
+          <!--<el-button type="danger" size="mini" icon="el-icon-remove">删除</el-button>-->
         </template>
       </el-table-column>
     </el-table>
@@ -62,8 +52,8 @@
       <el-pagination v-show="total>0" :current-page="options.pageNum" :page-sizes="[10,20,30, 50]" :page-size="options.pageSize" :total="total" background layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange"/>
     </div>
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="dialogData" label-position="left" label-width="80px" style="width: 400px; margin-left:50px;">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :fullscreen="true">
+      <el-form ref="dataForm" :rules="rules" :model="dialogData" label-position="left" label-width="100px" style="width: 1000px; margin-left:50px;">
         <el-form-item v-if="dialogStatus==='update'" label="ID">
           <el-input v-model="dialogData.id" :disabled="true"/>
         </el-form-item>
@@ -73,8 +63,19 @@
         <el-form-item label="僧人概述" prop="templeMonkDesciption">
           <el-input v-model="dialogData.templeMonkDesciption" />
         </el-form-item>
-        <el-form-item label="僧人简介" prop="templeMonkIntroduce">
-          <el-input v-model="dialogData.templeMonkIntroduce" :rows="4" type="textarea" />
+        <el-form-item label="僧人介绍" prop="templeMonkIntroduce">
+          <div>
+            <tinymce :height="300" v-model="dialogData.templeMonkIntroduce" :dialogid="dialogData.id"/>
+          </div>
+          <el-dialog
+            :visible.sync="innerVisible"
+            :fullscreen="true"
+            width="30%"
+            title="内容预览"
+            append-to-body>
+            <div v-html="dialogData.templeMonkIntroduce" />
+          </el-dialog>
+          <el-button style="margin-top: 10px" type="primary" icon="el-icon-search" @click="innerVisible = true">点击预览</el-button>
         </el-form-item>
         <el-form-item label="排序" prop="sort">
           <el-input-number :min="1" v-model="dialogData.sort" name="sort" controls-position="right" />
@@ -103,9 +104,11 @@
 
 <script>
 import { templeMonkList, templeMonkEdit, templeMonkAdd } from '@/api/temple'
+import Tinymce from '@/components/Tinymce'
 import { imgUrl } from '@/api/images'
 export default {
   name: 'TempleMonk',
+  components: { Tinymce },
   data() {
     return {
       imgUrl: imgUrl,
@@ -118,6 +121,7 @@ export default {
       list: [],
       total: 1,
       dialogFormVisible: false,
+      innerVisible: false,
       dialogStatus: '',
       textMap: {
         update: '编辑',
@@ -260,10 +264,15 @@ export default {
       return isJPG && isLt2M
     },
     openClose(row) {
-      templeMonkEdit({ status: Number(!row.status), id: row.id }).then(res => {
+      if (row.status !== 1) {
+        row.status = 1
+      } else {
+        row.status = 2
+      }
+      templeMonkEdit({ status: row.status, id: row.id }).then(res => {
         for (const v of this.list) {
           if (v.id === row.id) {
-            v.status = Number(!row.status)
+            v.status = row.status
             break
           }
         }

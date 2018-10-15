@@ -97,11 +97,47 @@
         <el-button type="primary" @click="editMerits">确定</el-button>
       </div>
     </el-dialog>
+    <el-dialog
+      :visible.sync="detailVisible"
+      :fullscreen="true"
+      width="30%"
+      title="订单详情"
+      append-to-body>
+      <el-form ref="detailForm" :rules="rules" :model="dialogDetail" label-position="left" label-width="90px" style="width: 400px; margin-left:50px;">
+        <el-form-item label="订单编号">
+          <div v-html="dialogDetail.merits.meritsNumber" />
+        </el-form-item>
+        <el-form-item label="祈愿人姓名" prop="imgLink">
+          <div v-html="dialogDetail.merits.customerName" />
+        </el-form-item>
+        <el-form-item label="功德项目" prop="imgLink">
+          <div v-html="dialogDetail.merits.meritsName" />
+        </el-form-item>
+        <el-form-item label="祈愿心愿" prop="imgLink">
+          <div v-html="dialogDetail.promisContent" />
+        </el-form-item>
+        <el-form-item label = "状态" prop="imgLink">
+          <div v-html="dialogDetail.merits.meritsStatus"/>
+        </el-form-item>
+        <el-form-item label="预约时间" prop="imgDescription">
+          <div v-html="dialogDetail.merits.applyTime" />
+        </el-form-item>
+        <el-form-item label="回执图片1" prop="meritsImg1">
+          <img v-if="dialogDetail.meritsImg1" :src="dialogDetail.meritsImg1" class="avatar" >
+        </el-form-item>
+        <el-form-item label="回执图片2" prop="meritsImg2">
+          <img v-if="dialogDetail.meritsImg2" :src="dialogDetail.meritsImg2" class="avatar" >
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer buttonCenter">
+        <el-button type="primary" @click="detailVisible = false">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getOrderList, orderCompletion, orderDetail } from '@/api/order'
+import { getTempleOrderList, orderCompletion, orderDetail } from '@/api/order'
 import { imgUrl } from '@/api/images'
 export default {
   name: 'TempleOrderList',
@@ -116,6 +152,7 @@ export default {
         pageSize: 10
       },
       dialogFormVisible: false,
+      detailVisible: false,
       rules: {
         meritsImg1: [
           { required: true, message: '请上传图片1', trigger: 'change' }
@@ -144,6 +181,17 @@ export default {
       },
       meritsParams: {
         id: null
+      },
+      dialogDetail: {
+        merits: {
+          meritsNumber: null,
+          customerName: null,
+          meritsName: null,
+          applyTime: null,
+          meritsStatus: null
+        },
+        meritsImg1: null,
+        meritsImg2: null
       },
       imgUrl: imgUrl,
       dialogShowImg1: null,
@@ -253,9 +301,24 @@ export default {
         }
       })
     },
+    meritsDetail(row) {
+      this.meritsParams.id = row.id
+      orderDetail(this.meritsParams).then(res => {
+        if (res.data) {
+          this.dialogDetail = Object.assign({}, res.data) // copy obj
+          this.dialogDetail.meritsImg1 = this.dialogDetail.meritsImg1 + '/200X200'
+          this.dialogDetail.meritsImg2 = this.dialogDetail.meritsImg2 + '/200X200'
+          this.dialogDetail.merits = row
+          this.detailVisible = true
+        } else {
+          this.dialogDetail.merits = Object.assign({}, row)
+          this.detailVisible = true
+        }
+      })
+    },
     getList() {
       this.listLoading = true
-      getOrderList(this.options).then(res => {
+      getTempleOrderList(this.options).then(res => {
         this.listLoading = false
         res.data.list.forEach(item => {
           switch (item.meritsStatus) {
@@ -293,5 +356,7 @@ export default {
 </script>
 
 <style scoped>
-
+  .buttonCenter{
+    text-align: center;
+  }
 </style>

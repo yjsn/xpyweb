@@ -7,7 +7,7 @@
           <el-button class="filter-item" type="primary" @click="handleEdit">编辑</el-button>
         </div>
         <div style="padding: 10px">
-          <img :src="introduction.templeCoverImg" alt="" class="fahuiImg">
+          <img v-if="introduction.templeCoverImg" :src="dialogShowImg" alt="" class="fahuiImg">
           <h4>{{ introduction.templeName }}</h4>
           <p>{{ introduction.templeIntroduce }}</p>
         </div>
@@ -86,7 +86,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取消</el-button>
+        <el-button @click="dialogCancel">取消</el-button>
         <el-button type="primary" @click="editIntroduction">确定</el-button>
       </div>
     </el-dialog>
@@ -136,6 +136,9 @@ export default {
   created() {
     queryTempleIntroduce({ id: this.$route.query.id }).then(res => {
       this.introduction = res.data
+      if (this.introduction.templeCoverImg) {
+        this.dialogShowImg = this.introduction.templeCoverImg + '/base'
+      }
     })
     templeMonkList({ bean: {}, pageNum: 1, pageSize: 3 }).then(res => {
       this.monks = res.data.list
@@ -146,10 +149,10 @@ export default {
   },
   methods: {
     goToMonk() {
-      this.$router.push({ name: 'TempleMonk', query: { id: this.$route.query.id }})
+      this.$router.push({ name: 'TempleMonk', query: { id: this.introduction.templeId }})
     },
     goToActivity() {
-      this.$router.push({ name: 'TempleNotice', query: { id: this.$route.query.id }})
+      this.$router.push({ name: 'TempleNotice', query: { id: this.introduction.templeId }})
     },
     handleImgSuccess(res, file) {
       this.dialogShowImg = URL.createObjectURL(file.raw)
@@ -176,6 +179,10 @@ export default {
         id: null
       }
     },
+    dialogCancel() {
+      this.dialogFormVisible = false
+      this.dialogShowImg = this.dialogData.templeCoverImg + '/base'
+    },
     handleEdit() {
       this.dialogData = Object.assign({}, this.introduction) // copy obj
       this.dialogShowImg = this.dialogData.templeCoverImg + '/200X200'
@@ -191,6 +198,7 @@ export default {
           queryEditTempleIntroduce(tempData).then((res) => {
             this.introduction = res.data
             this.dialogFormVisible = false
+            this.dialogShowImg = this.introduction.templeCoverImg + '/base'
             this.$notify({
               title: '成功',
               message: '编辑成功',
