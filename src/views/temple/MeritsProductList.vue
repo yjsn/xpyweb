@@ -4,6 +4,7 @@
       <el-input v-model="options.bean.meritsName" placeholder="产品名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
       <el-input v-model="options.bean.templeName" placeholder="寺庙名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
+      <el-button class="filter-item" type="primary" icon="el-icon-circle-plus" @click="handleCreate">新增</el-button>
     </div>
 
     <el-table
@@ -56,11 +57,7 @@
       <el-table-column label="操作" width="305">
         <template slot-scope="scope">
           <el-button v-if="scope.row.status==1 || scope.row.status==2" type="warning" size="mini" icon="el-icon-setting" @click="openClose(scope.row)">{{ scope.row.status==2?'启用':'禁用' }}</el-button>
-          <template v-if="scope.row.status==0">
-            <el-button type="success" size="mini" icon="el-icon-setting" @click="toBeCross(scope.row)">通过</el-button>
-            <el-button type="warning" size="mini" icon="el-icon-setting" @click="toBeNoCross(scope.row)">不通过</el-button>
-          </template>
-          <el-button type="primary" size="mini" icon="el-icon-edit" @click="goToEdit(scope.row.id)">首页编辑</el-button>
+          <el-button type="primary" size="mini" icon="el-icon-edit" @click="goToEdit(scope.row.id)">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -68,11 +65,43 @@
     <div class="pagination-container">
       <el-pagination v-show="total>0" :current-page="options.pageNum" :page-sizes="[10,20,30, 50]" :page-size="options.pageSize" :total="total" background layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange"/>
     </div>
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+      <el-form ref="dataForm" :rules="rules" :model="dialogData" label-position="left" label-width="90px" style="width: 400px; margin-left:50px;">
+        <el-form-item v-if="dialogStatus==='update'" label="ID">
+          <el-input v-model="dialogData.id" :disabled="true"/>
+        </el-form-item>
+        <el-form-item label="所属寺庙" prop="templeId">
+          <el-select v-model="dialogData.parentId" class="filter-item" placeholder="请选择">
+            <el-option v-for="item in menuList" :key="item.id" :label="item.name" :value="item.id"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="名称" prop="name">
+          <el-input v-model="dialogData.name" :disabled="dialogStatus==='update'" name="name"/>
+        </el-form-item>
+        <el-form-item label="icon" prop="icon">
+          <el-input v-model="dialogData.icon" name="icon"/>
+        </el-form-item>
+        <el-form-item label="排序" prop="sort">
+          <el-input-number :min="1" v-model="dialogData.sort" name="sort" controls-position="right" />
+        </el-form-item>
+        <el-form-item label="状态" prop="state">
+          <el-radio-group v-model="dialogData.state">
+            <el-radio :label="1">启用</el-radio>
+            <el-radio :label="2">禁用</el-radio>
+          </el-radio-group>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取消</el-button>
+        <el-button v-if="dialogStatus=='create'" type="primary" @click="addNewMenu">确定</el-button>
+        <el-button v-else type="primary" @click="editMenu">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-  import { getTempleList, ableTemple, disableTemple, checkFailTemple } from '@/api/temple'
+  import { getMeritsList, addMeritsProduct, editMeritsProduct, getTempleList } from '@/api/meritsProduct'
   export default {
     name: 'TempleList',
     data() {
@@ -80,14 +109,45 @@
         options: {
           bean: {
             templeName: '',
-            templeNumber: ''
+            meritsName: ''
           },
           pageNum: 1,
           pageSize: 10
         },
         listLoading: false,
         list: [],
-        total: 0
+        total: 0,
+        dialogFormVisible: false,
+        dialogStatus: '',
+        textMap: {
+          update: '编辑',
+          create: '新增'
+        },
+        rules: {
+          name: [
+            { required: true, message: '请输入名称', trigger: 'blur' }
+          ],
+          icon: [
+            { required: true, message: '请输入icon', trigger: 'blur' }
+          ],
+          parentId: [
+            { required: true, message: '请选择父级菜单', trigger: 'change' }
+          ],
+          sort: [
+            { required: true, message: '请输入排序', trigger: 'blur' }
+          ],
+          state: [
+            { required: true, message: '请选择状态', trigger: 'change' }
+          ]
+        },
+        dialogData: {
+          icon: null,
+          id: null,
+          name: null,
+          state: null,
+          parentId: null,
+          sort: 1
+        }
       }
     },
     created() {
@@ -107,9 +167,17 @@
         this.getList()
       },
       getList() {
-        getTempleList(this.options).then(res => {
+        getMeritsList(this.options).then(res => {
           this.list = res.data.list
           this.total = res.data.total
+        })
+      },
+      handleCreate() {
+        this.resetTemp()
+        this.dialogStatus = 'create'
+        this.dialogFormVisible = true
+        this.$nextTick(() => {
+          this.$refs['dataForm'].clearValidate()
         })
       },
       toBeCross(row) {
@@ -178,7 +246,7 @@
         })
       },
       goToEdit(id) {
-        this.$router.push({ name: 'TempleHome', query: { id: id }})
+
       }
     }
   }
