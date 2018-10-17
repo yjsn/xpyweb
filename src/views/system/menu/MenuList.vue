@@ -25,7 +25,7 @@
       </el-table-column>
       <el-table-column label="父级菜单">
         <template slot-scope="scope">
-          <span>{{ scope.row.parentName }}</span>
+          <span>{{ scope.row.parentName?scope.row.parentName:'无' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="状态">
@@ -65,6 +65,9 @@
           <el-select v-model="dialogData.parentId" class="filter-item" placeholder="请选择">
             <el-option v-for="item in menuList" :key="item.id" :label="item.name" :value="item.id"/>
           </el-select>
+        </el-form-item>
+        <el-form-item label="url" prop="url">
+          <el-input v-model="dialogData.url" name="url"/>
         </el-form-item>
         <el-form-item label="排序" prop="sort">
           <el-input-number :min="1" v-model="dialogData.sort" name="sort" controls-position="right" />

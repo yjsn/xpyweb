@@ -140,6 +140,12 @@ export const newRouters = {
           'meta': { 'title': '寺庙订单列表', 'icon': 'money' }
         },
         {
+          'path': 'MeritsProductList',
+          'name': 'MeritsProductList',
+          'component': () => import('@/views/Temple/MeritsProductList'),
+          'meta': { 'title': '寺庙功德列表', 'icon': 'money' }
+        },
+        {
           'path': 'templeHome',
           'name': 'TempleHome',
           'component': () => import('@/views/Temple/TempleHome'),
