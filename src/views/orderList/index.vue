@@ -73,7 +73,7 @@
             :on-success="handleImgSuccess"
             :before-upload="beforeImgUpload"
             :action="imgUrl"
-            :data="{ type: 'img', folder: 'merits', templeId: dialogData.id }"
+            :data="{ type: 'img', folder: 'merits', templeId: meritsParams.id }"
             class="avatar-uploader">
             <img v-if="dialogData.meritsImg1" :src="dialogShowImg1" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon" />
@@ -85,7 +85,7 @@
             :on-success="handleImgSuccess1"
             :before-upload="beforeImgUpload"
             :action="imgUrl"
-            :data="{ type: 'img', folder: 'merits', templeId: dialogData.id }"
+            :data="{ type: 'img', folder: 'merits', templeId: meritsParams.id }"
             class="avatar-uploader">
             <img v-if="dialogData.meritsImg2" :src="dialogShowImg2" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon" />
@@ -280,6 +280,7 @@ export default {
           const meritsDetailData = Object.assign({}, this.dialogData)
           console.log(meritsDetailData)
           orderCompletion(meritsDetailData).then((res) => {
+            res.data.meritsStatus = '完成'
             for (const v of this.list) {
               if (v.id === this.dialogData.meritsId) {
                 const index = this.list.indexOf(v)
